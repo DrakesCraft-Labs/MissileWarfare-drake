@@ -1,51 +1,50 @@
 # MissileWarfare-drake
 
-## Resumen Drake
-Addon de Slimefun enfocado en armamento, misiles y mecanicas de combate.
+[![Rama](https://img.shields.io/badge/branch-1.21--latin-2ea44f)](https://github.com/DrakesCraft-Labs/MissileWarfare-drake/tree/1.21-latin)
+[![Licencia](https://img.shields.io/github/license/DrakesCraft-Labs/MissileWarfare-drake)](https://github.com/DrakesCraft-Labs/MissileWarfare-drake/blob/1.21-latin/LICENSE)
+[![Ultimo commit](https://img.shields.io/github/last-commit/DrakesCraft-Labs/MissileWarfare-drake/1.21-latin)](https://github.com/DrakesCraft-Labs/MissileWarfare-drake/commits/1.21-latin)
 
-## Que anade a Slimefun
-- Extiende contenido de Slimefun con mecanicas y bloques propios del addon.
-- Incluye ajustes de compatibilidad para stack Drake 1.21.
+## Descripción técnica
+Addon de combate con misiles/armamento integrado al ecosistema Slimefun.
 
-## Estado
-- Extraido desde drakes-slimefun-labs (rama 1.21-latin).
-- Objetivo: desarrollo aislado por addon y releases independientes.
+## Qué añade a Slimefun
+- Contenido PvP/PvE avanzado para servidores con enfoque combate.
+- Nuevas opciones tácticas y de defensa.
+- Amplía la rama de armamento tecnológico en Slimefun.
 
----
+## Características principales
+- Misiles y utilidades bélicas con configuración de variantes.
+- Integraciones condicionales con plugins de protección.
+- Ajustes de partículas/compat API para 1.21.
 
+## Matriz de compatibilidad
+| Componente | Estado |
+|---|---|
+| Minecraft | 1.21.x |
+| Paper/Purpur | 1.21.x |
+| Slimefun Core Drake | 11.x (línea `1.21-latin`) |
+| Java | 21 |
 
-# MissileWarfare
+## Instalación
+1. Descarga el `.jar` de Releases del repositorio.
+2. Copia el archivo en la carpeta `plugins/` del servidor.
+3. Asegura dependencias (`Slimefun`, `ProtocolLib` u otras según addon).
+4. Reinicia el servidor y revisa `logs/latest.log` para validar carga.
 
-> Join our [Discord](https://discord.gg/bcYdK8xfkF) for support.
+## Build local
+```bash
+mvn -DskipTests clean package
+```
 
-Ever wanted a long-range solution to the destruction of a minecraft base? Ever wanted to recreate the stunning images of SAM missiles intercepting rockets?
-MissileWarfare provides both of those, and more.
-This Slimefun addon adds the following (amazing) features to your (wonderful) server.
+Artefacto esperado:
+- `target/MissileWarfare-*.jar`
 
- - SSM: Surface-to-Surface Missiles
-	 - Small, medium, large and advanced missiles with Normal, Accurate, Long-Range and High-Explosive types!
-	 - Anti-Radiation Missiles (ARM) fly like a normal SSM until it finds a radar, where it will fly directly into it and (hopefully) destroy it! (Coming soon)
-	 - Extremely long range ICBMs!
-	 - Napalm, Sticky Missile, Gas Missile and some other misc. missiles!
- - SAM: Surface-to-Air Missiles
-	 - Anti-Elytra Missiles (AEM) lock onto players flying with Elytras, and shoot them down!
-	 - Missile Interceptors well... Intercept missiles as they detect them, and shoot them down!
- - Radars & Displays (coming soon)
+## Flujo de release
+1. Crear branch de cambios (`feature/*` o `fix/*`).
+2. Abrir PR hacia `1.21-latin` con plan de pruebas.
+3. Al mergear, crear tag/release y publicar jar compilado.
 
-## Integrations (Soft Depends)
-- **Towny:** Checks if the person nearest to the missile at the time of its launch was an enemy of the town where the explosion has happened. If they aren't, the explosion is cancelled.
-- **Worldguard:** Adds flag `ALLOW_MISSILE_EXPLODE`. 
+Validar seguridad de daño/zonas protegidas antes de release público.
 
-## Contributors
-|Position|Discord|Github|
-|--|--|--|
-|Original Author| pain.#2883 | [koiboi-dev](https://github.com/koiboi-dev) |
-| Current Maintainer and Developer | Colonel Kai#0001 | [ColonelKai](https://github.com/ColonelKai) |
-
-<!-- DRAKES-STATUS:BEGIN -->
-> Estado de sincronizacion: **2026-04-24**.
-> Baseline tecnico vigente: **Paper 1.21.1 + Java 21**.
-> CI principal en `1.21-latin`: **Gates 1-5 en verde**.
-> Nota: el monorepo completo sigue en migracion incremental por lotes.
-<!-- DRAKES-STATUS:END -->
-
+## Relación con el monorepo
+Este repositorio se mantiene en paralelo con `drakes-slimefun-labs` para desarrollo aislado por addon y despliegues independientes.
