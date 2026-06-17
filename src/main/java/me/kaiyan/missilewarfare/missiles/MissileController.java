@@ -73,12 +73,7 @@ public class MissileController {
         this.target = target;
         dir = new Vector(0,0,0);
 
-        armourStand = world.spawnEntity(pos.toLocation(world), EntityType.ARMOR_STAND);
-        armourStand.setPersistent(true);
-        ((LivingEntity) armourStand).getEquipment().setHelmet(new ItemStack(Material.GREEN_CONCRETE));
-        armourStand.setGravity(false);
-        ((LivingEntity) armourStand).setInvisible(true);
-        armourStand.setCustomName("MissileHolder");
+        spawnHolder();
         //((LivingEntity) armorStand).addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1, true, false));
 
         if (type != 17){
@@ -102,13 +97,16 @@ public class MissileController {
 
         this.target = target;
         this.dir = dir;
+        nearestPlayer = findNearestPlayer();
 
         if (type != 17){
             deployedCluster = true;
         }
 
+        spawnHolder();
 
         MissileWarfare.activemissiles.add(this);
+        MissileWarfare.firedMissiles += 1;
     }
 
     public void FireMissile(){
@@ -232,6 +230,29 @@ public class MissileController {
         }
     }
 
+    private void spawnHolder() {
+        armourStand = world.spawnEntity(pos.toLocation(world), EntityType.ARMOR_STAND);
+        armourStand.setPersistent(true);
+        ((LivingEntity) armourStand).getEquipment().setHelmet(new ItemStack(Material.GREEN_CONCRETE));
+        armourStand.setGravity(false);
+        ((LivingEntity) armourStand).setInvisible(true);
+        armourStand.setCustomName("MissileHolder");
+    }
+
+    private Player findNearestPlayer() {
+        List<Player> players = world.getPlayers();
+        double mindist = Double.MAX_VALUE;
+        Player outplayer = null;
+        for (Player player : players){
+            double playerdist = player.getLocation().distanceSquared(pos.toLocation(world));
+            if (mindist > playerdist){
+                mindist = playerdist;
+                outplayer = player;
+            }
+        }
+        return outplayer;
+    }
+
     public void spawnExplosionWithCheck(){
         if (MissileWarfare.townyEnabled){
             boolean explode = TownyLoader.exploded(nearestPlayer, pos.toLocation(world));
@@ -323,7 +344,9 @@ public class MissileController {
                 }
             }
         }
-        armourStand.remove();
+        if (armourStand != null && !armourStand.isDead()) {
+            armourStand.remove();
+        }
         MissileWarfare.activemissiles.remove(this);
         run.cancel();
     }
@@ -430,7 +453,7 @@ public class MissileController {
             @Override
             public void run() {
                 world.spawnParticle(Particle.CLOUD, pos.toLocation(world), 0, Math.random() - 0.5, Math.random()-1, Math.random() - 0.5, 0.1);
-                if (loops < 20) {
+                if (loops > 20) {
                     this.cancel();
                 }
                 loops++;

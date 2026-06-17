@@ -84,12 +84,20 @@ public class AntiMissileLauncher extends SlimefunItem{
                     }
                     state.update();
                     try {
-                        if (locked != null && cont.get(new NamespacedKey(MissileWarfare.getInstance(), "timesincelastshot"), PersistentDataType.INTEGER) <= System.currentTimeMillis()) {
-                            cont.set(new NamespacedKey(MissileWarfare.getInstance(), "timesincelastshot"), PersistentDataType.INTEGER, (int)System.currentTimeMillis()+1000);
+                        NamespacedKey cooldownKey = new NamespacedKey(MissileWarfare.getInstance(), "timesincelastshot");
+                        Long nextShotAt = cont.get(cooldownKey, PersistentDataType.LONG);
+                        if (nextShotAt == null) {
+                            cont.set(cooldownKey, PersistentDataType.LONG, Long.MIN_VALUE);
+                            state.update();
+                            nextShotAt = Long.MIN_VALUE;
+                        }
+                        if (locked != null && nextShotAt <= System.currentTimeMillis()) {
+                            cont.set(new NamespacedKey(MissileWarfare.getInstance(), "timesincelastshot"), PersistentDataType.LONG, System.currentTimeMillis() + 1000L);
+                            state.update();
                             fireMissile((Dispenser) block.getState(), locked);
                         }
                     } catch (NullPointerException e){
-                        cont.set(new NamespacedKey(MissileWarfare.getInstance(), "timesincelastshot"), PersistentDataType.INTEGER, Integer.MIN_VALUE);
+                        cont.set(new NamespacedKey(MissileWarfare.getInstance(), "timesincelastshot"), PersistentDataType.LONG, Long.MIN_VALUE);
                         state.update();
                     }
                 }
