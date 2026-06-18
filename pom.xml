@@ -83,8 +83,15 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <!-- Replace this with your package! -->
-                            <shadedPattern>me.kaiyan.missilewarfare</shadedPattern>
+                            <shadedPattern>me.kaiyan.missilewarfare.libs.bstats</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>dev.drake.dough</pattern>
+                            <shadedPattern>me.kaiyan.missilewarfare.libs.dough</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.apache.commons.lang</pattern>
+                            <shadedPattern>me.kaiyan.missilewarfare.libs.commons.lang</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -143,6 +150,13 @@
             <groupId>com.github.drakescraft_labs</groupId>
             <artifactId>dough-core</artifactId>
             <version>${dough.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
             <scope>compile</scope>
         </dependency>
     
