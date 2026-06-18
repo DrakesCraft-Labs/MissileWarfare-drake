@@ -57,10 +57,12 @@ public class WorldGuardLoader {
             world.createExplosion(pos.toLocation(world), (float) power, false, true, armourStand);
         } else {
             ApplicableRegionSet set = regions.getApplicableRegions(BlockVector3.at(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()));
-            if (WorldGuardPlugin.inst().wrapPlayer(nearestPlayer) != null){
+            // nearestPlayer null o no wrappeable → explotar sin restricción de flag
+            if (nearestPlayer == null || WorldGuardPlugin.inst().wrapPlayer(nearestPlayer) == null){
                 world.createExplosion(pos.toLocation(world), (float) power, false, true, armourStand);
                 return;
             }
+            // testState devuelve true si el flag allow-missile-explode está ALLOW en la región
             world.createExplosion(pos.toLocation(world), (float) power, false, set.testState(WorldGuardPlugin.inst().wrapPlayer(nearestPlayer), WorldGuardLoader.ALLOW_MISSILE_EXPLODE), armourStand);
         }
     }
