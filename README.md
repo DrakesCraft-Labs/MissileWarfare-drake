@@ -4,12 +4,12 @@
 [![Licencia](https://img.shields.io/github/license/DrakesCraft-Labs/MissileWarfare-drake)](https://github.com/DrakesCraft-Labs/MissileWarfare-drake/blob/1.21-latin/LICENSE)
 [![Ultimo commit](https://img.shields.io/github/last-commit/DrakesCraft-Labs/MissileWarfare-drake/1.21-latin)](https://github.com/DrakesCraft-Labs/MissileWarfare-drake/commits/1.21-latin)
 
-## Description técnica
+## Descripción técnica
 Addon de combate con misiles/armamento integrado al ecosistema Slimefun.
 
 ## Qué añade a Slimefun
 - Contenido PvP/PvE avanzado para servidores con enfoque combate.
-- Nuevas opciones tácticas y de defensa.
+- Nuevas options tácticas y de defensa.
 - Amplía la rama de armamento tecnológico en Slimefun.
 
 ## Key Features
@@ -27,7 +27,7 @@ Addon de combate con misiles/armamento integrado al ecosistema Slimefun.
 
 ## Installation
 1. Descarga el `.jar` de Releases del repositorio.
-2. Copia el archivo en la carpeta `plugins/` del servidor.
+2. Copia el archivo en la folder `plugins/` del servidor.
 3. Asegura dependencias (`Slimefun`, `ProtocolLib` u otras según addon).
 4. Reinicia el servidor y revisa `logs/latest.log` para validar carga.
 
