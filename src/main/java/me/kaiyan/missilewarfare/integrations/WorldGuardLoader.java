@@ -6,6 +6,7 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
@@ -50,20 +51,46 @@ public class WorldGuardLoader {
         }
     }
 
-    public static void explode(World world, Vector pos, double power, Entity armourStand, Player nearestPlayer){
+    /**
+     * Checks terrain damage against the actual missile owner. A null owner is never
+     * allowed to alter a managed WorldGuard world, which keeps automated launchers
+     * from inheriting permission from an unrelated nearby player.
+     */
+    public static boolean canBreakBlocks(World world, Vector pos, Player owner) {
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionManager regions = container.get(new BukkitWorld(world));
-        if (regions == null){
-            world.createExplosion(pos.toLocation(world), (float) power, false, true, armourStand);
-        } else {
-            ApplicableRegionSet set = regions.getApplicableRegions(BlockVector3.at(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()));
-            // nearestPlayer null o no wrappeable → explotar sin restricción de flag
-            if (nearestPlayer == null || WorldGuardPlugin.inst().wrapPlayer(nearestPlayer) == null){
-                world.createExplosion(pos.toLocation(world), (float) power, false, true, armourStand);
-                return;
-            }
-            // testState devuelve true si el flag allow-missile-explode está ALLOW en la región
-            world.createExplosion(pos.toLocation(world), (float) power, false, set.testState(WorldGuardPlugin.inst().wrapPlayer(nearestPlayer), WorldGuardLoader.ALLOW_MISSILE_EXPLODE), armourStand);
+        if (regions == null) {
+            return true;
         }
+
+        if (owner == null || WorldGuardPlugin.inst().wrapPlayer(owner) == null) {
+            return false;
+        }
+
+        ApplicableRegionSet set = regions.getApplicableRegions(BlockVector3.at(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()));
+        return set.testState(WorldGuardPlugin.inst().wrapPlayer(owner), ALLOW_MISSILE_EXPLODE)
+                && set.testState(WorldGuardPlugin.inst().wrapPlayer(owner), Flags.BLOCK_BREAK);
+    }
+
+    /** Keeps secondary missile effects (lava, fire and cobwebs) inside build permissions. */
+    public static boolean canPlaceBlocks(World world, Vector pos, Player owner) {
+        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        RegionManager regions = container.get(new BukkitWorld(world));
+        if (regions == null) {
+            return true;
+        }
+
+        if (owner == null || WorldGuardPlugin.inst().wrapPlayer(owner) == null) {
+            return false;
+        }
+
+        ApplicableRegionSet set = regions.getApplicableRegions(BlockVector3.at(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()));
+        return set.testState(WorldGuardPlugin.inst().wrapPlayer(owner), ALLOW_MISSILE_EXPLODE)
+                && set.testState(WorldGuardPlugin.inst().wrapPlayer(owner), Flags.BLOCK_PLACE);
+    }
+
+    public static void explode(World world, Vector pos, double power, Entity armourStand, Player owner){
+        boolean breakBlocks = canBreakBlocks(world, pos, owner);
+        world.createExplosion(pos.toLocation(world), (float) power, false, breakBlocks, armourStand);
     }
 }

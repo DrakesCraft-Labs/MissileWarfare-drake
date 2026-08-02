@@ -51,17 +51,8 @@ public class MissileController {
         this.type = type;
         this.cruiseAlt = cruiseAlt;
 
-        List<Player> players = world.getPlayers();
-        double mindist = Double.MAX_VALUE;
-        Player outplayer = null;
-        for (Player player : players){
-            double playerdist = player.getLocation().distanceSquared(pos.toLocation(world));
-            if (mindist > playerdist){
-                mindist = playerdist;
-                outplayer = player;
-            }
-        }
-        nearestPlayer = outplayer;
+        // Automated launchers have no accountable player: protected regions stay safe.
+        nearestPlayer = null;
 
         Random rand = new Random(System.nanoTime());
         target = target.add(new Vector((rand.nextDouble()-0.5)*accuracy, 0, (rand.nextDouble()-0.5)*accuracy));
@@ -85,6 +76,11 @@ public class MissileController {
         MissileWarfare.firedMissiles += 1;
     }
     public MissileController(boolean isgroundmissile, Vector startpos, Vector target, float speed, World world, double power, float accuracy, int type, Vector dir){
+        this(isgroundmissile, startpos, target, speed, world, power, accuracy, type, dir, null);
+    }
+
+    /** Creates a manually fired missile tied to its real launcher for protection checks. */
+    public MissileController(boolean isgroundmissile, Vector startpos, Vector target, float speed, World world, double power, float accuracy, int type, Vector dir, Player owner){
         this.isgroundmissile = isgroundmissile;
         pos = startpos;
         this.speed = speed;
@@ -97,7 +93,7 @@ public class MissileController {
 
         this.target = target;
         this.dir = dir;
-        nearestPlayer = findNearestPlayer();
+        nearestPlayer = owner;
 
         if (type != 17){
             deployedCluster = true;
@@ -153,7 +149,7 @@ public class MissileController {
                     explode(run);
                 }
                 if (rand.nextDouble() < 0.1){
-                    world.getBlockAt(pos.toLocation(world)).setType(Material.AIR);
+                    breakImpactBlock();
                     explode(run);
                 }
                 if (blockcount >= 1) {
@@ -171,7 +167,7 @@ public class MissileController {
                     explode(run);
                 }
                 if (rand.nextDouble() < 0.25){
-                    world.getBlockAt(pos.toLocation(world)).setType(Material.AIR);
+                    breakImpactBlock();
                     explode(run);
                 }
                 blockcount++;
@@ -239,20 +235,6 @@ public class MissileController {
         armourStand.setCustomName("MissileHolder");
     }
 
-    private Player findNearestPlayer() {
-        List<Player> players = world.getPlayers();
-        double mindist = Double.MAX_VALUE;
-        Player outplayer = null;
-        for (Player player : players){
-            double playerdist = player.getLocation().distanceSquared(pos.toLocation(world));
-            if (mindist > playerdist){
-                mindist = playerdist;
-                outplayer = player;
-            }
-        }
-        return outplayer;
-    }
-
     public void spawnExplosionWithCheck(){
         if (MissileWarfare.townyEnabled){
             boolean explode = TownyLoader.exploded(nearestPlayer, pos.toLocation(world));
@@ -289,14 +271,14 @@ public class MissileController {
                 RayTraceResult result = world.rayTraceBlocks(pos.toLocation(world).add(0,3,0), dir, 10, FluidCollisionMode.ALWAYS, true);
                 if (result != null) {
                     Block hitblock = result.getHitBlock();
-                    hitblock.getRelative(result.getHitBlockFace()).setType(Material.COBWEB);
+                    placeEffectBlock(hitblock.getRelative(result.getHitBlockFace()), Material.COBWEB);
                 } else {
                     Vector hit = dir.clone();
                     for (int _i = 0; _i < 10; _i++){
                         hit.subtract(new Vector(0,1,0));
-                        if (world.getBlockAt(hit.toLocation(world)) != null){
+                        if (world.getBlockAt(hit.toLocation(world)).getType() != Material.AIR){
                             Block hitblock = world.getBlockAt(hit.toLocation(world));
-                            hitblock.getRelative(BlockFace.UP).setType(Material.COBWEB);
+                            placeEffectBlock(hitblock.getRelative(BlockFace.UP), Material.COBWEB);
                             break;
                         }
                     }
@@ -310,14 +292,14 @@ public class MissileController {
                 RayTraceResult result = world.rayTraceBlocks(pos.toLocation(world).add(0,3,0), dir, 10, FluidCollisionMode.ALWAYS, true);
                 if (result != null) {
                     Block hitblock = result.getHitBlock();
-                    hitblock.getRelative(result.getHitBlockFace()).setType(Material.LAVA);
+                    placeEffectBlock(hitblock.getRelative(result.getHitBlockFace()), Material.LAVA);
                 } else {
                     Vector hit = dir.clone();
                     for (int _i = 0; _i < 20; _i++){
                         hit.subtract(new Vector(0,1,0));
-                        if (world.getBlockAt(hit.toLocation(world)) != null){
+                        if (world.getBlockAt(hit.toLocation(world)).getType() != Material.AIR){
                             Block hitblock = world.getBlockAt(hit.toLocation(world));
-                            hitblock.getRelative(BlockFace.UP).setType(Material.LAVA);
+                            placeEffectBlock(hitblock.getRelative(BlockFace.UP), Material.LAVA);
                             break;
                         }
                     }
@@ -330,14 +312,14 @@ public class MissileController {
                 if (result != null) {
                     Block hitblock = result.getHitBlock();
                     assert hitblock != null;
-                    hitblock.getRelative(Objects.requireNonNull(result.getHitBlockFace())).setType(Material.FIRE);
+                    placeEffectBlock(hitblock.getRelative(Objects.requireNonNull(result.getHitBlockFace())), Material.FIRE);
                 } else {
                     Vector hit = dir.clone();
                     for (int _i = 0; _i < 10; _i++){
                         hit.subtract(new Vector(0,1,0));
                         if (world.getBlockAt(hit.toLocation(world)).getType() != Material.AIR){
                             Block hitblock = world.getBlockAt(hit.toLocation(world));
-                            hitblock.getRelative(BlockFace.UP).setType(Material.FIRE);
+                            placeEffectBlock(hitblock.getRelative(BlockFace.UP), Material.FIRE);
                             break;
                         }
                     }
@@ -349,6 +331,22 @@ public class MissileController {
         }
         MissileWarfare.activemissiles.remove(this);
         run.cancel();
+    }
+
+    /** Applies temporary terrain effects only where the launcher can build. */
+    private void placeEffectBlock(Block block, Material material) {
+        if (!MissileWarfare.worldGuardEnabled
+                || WorldGuardLoader.canPlaceBlocks(world, block.getLocation().toVector(), nearestPlayer)) {
+            block.setType(material);
+        }
+    }
+
+    /** Handles penetrating missile impacts without bypassing WorldGuard protection. */
+    private void breakImpactBlock() {
+        if (!MissileWarfare.worldGuardEnabled
+                || WorldGuardLoader.canBreakBlocks(world, pos, nearestPlayer)) {
+            world.getBlockAt(pos.toLocation(world)).setType(Material.AIR);
+        }
     }
 
     public Vector getVelocity(){

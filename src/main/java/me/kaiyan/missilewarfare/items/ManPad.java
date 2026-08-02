@@ -129,7 +129,7 @@ public class ManPad extends SlimefunItem {
                             this.cancel();
                         } else {
                             active.remove(event.getPlayer());
-                            MissileController missile = new MissileController(false, event.getPlayer().getLocation().toVector(), lockedmissile.pos, 5, event.getPlayer().getWorld(), 3, 0, 1, event.getPlayer().getLocation().getDirection());
+                            MissileController missile = new MissileController(false, event.getPlayer().getLocation().toVector(), lockedmissile.pos, 5, event.getPlayer().getWorld(), 3, 0, 1, event.getPlayer().getLocation().getDirection(), event.getPlayer());
                             missile.FireMissileAtMissile(lockedmissile);
                             event.getPlayer().getInventory().remove(manpad.getItem());
                             event.getPlayer().updateInventory();
