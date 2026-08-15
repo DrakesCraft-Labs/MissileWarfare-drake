@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/DrakesCraft-Labs/MissileWarfare-drake/1.21-latin/banner.svg" width="100%" alt="MISSILE WARFARE animated banner" />
+</p>
+
 # MissileWarfare-drake
 
 [![Rama](https://img.shields.io/badge/branch-1.21--latin-2ea44f)](https://github.com/DrakesCraft-Labs/MissileWarfare-drake/tree/1.21-latin)
