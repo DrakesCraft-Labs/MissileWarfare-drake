@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/DrakesCraft-Labs/MissileWarfare-drake/1.21-latin/banner.svg" width="100%" alt="MISSILE WARFARE animated banner" />
+  <img src="https://raw.githubusercontent.com/DrakesCraft-Labs/MissileWarfare-drake/main/banner.svg" width="100%" alt="MISSILE WARFARE animated banner" />
 </p>
 
 # MissileWarfare-drake
