@@ -4,6 +4,16 @@
 
 # MissileWarfare-drake
 
+> ### 🏰 ¡Únete a la Comunidad Oficial de DrakesCraft!
+> 
+> * 🎮 **IP del Servidor**: `play.drakescraft.net` *(Java 1.21.11 & Bedrock)*
+> * 💬 **Discord Oficial**: [discord.gg/drakescraft](https://discord.gg/rR7FbfCt9Y)
+> * 🌐 **Web & Guía**: [drakescraft.net](https://drakescraft.net) — 🛒 **Tienda**: [tienda.drakescraft.net](https://tienda.drakescraft.net)
+> 
+> *¡Juega con este addon y más de 80 expansiones optimizadas en vivo en nuestra network de supervivencia técnica!*
+
+---
+
 [![Rama](https://img.shields.io/badge/branch-1.21--latin-2ea44f)](https://github.com/DrakesCraft-Labs/MissileWarfare-drake/tree/1.21-latin)
 [![License](https://img.shields.io/github/license/DrakesCraft-Labs/MissileWarfare-drake)](https://github.com/DrakesCraft-Labs/MissileWarfare-drake/blob/1.21-latin/LICENSE)
 [![Ultimo commit](https://img.shields.io/github/last-commit/DrakesCraft-Labs/MissileWarfare-drake/1.21-latin)](https://github.com/DrakesCraft-Labs/MissileWarfare-drake/commits/1.21-latin)
